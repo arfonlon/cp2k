@@ -168,10 +168,10 @@ CONTAINS
       CHARACTER(LEN=*), PARAMETER                        :: routineN = 'hfx_admm_init'
 
       INTEGER                                            :: handle, ispin, n_rep_hf, nao_aux_fit, &
-                                                            natoms, nelectron, nmo
+                                                            natoms, nmo
       LOGICAL                                            :: calc_forces, do_kpoints, &
                                                             s_mstruct_changed, use_virial
-      REAL(dp)                                           :: maxocc
+      REAL(dp)                                           :: maxocc, nelectron
       TYPE(admm_type), POINTER                           :: admm_env
       TYPE(cp_blacs_env_type), POINTER                   :: blacs_env
       TYPE(cp_fm_struct_type), POINTER                   :: aux_fit_fm_struct
@@ -403,10 +403,9 @@ CONTAINS
 
       CHARACTER(LEN=*), PARAMETER                        :: routineN = 'aux_admm_init'
 
-      INTEGER                                            :: handle, ispin, nao_aux_fit, natoms, &
-                                                            nelectron, nmo
+      INTEGER                                            :: handle, ispin, nao_aux_fit, natoms, nmo
       LOGICAL                                            :: do_kpoints
-      REAL(dp)                                           :: maxocc
+      REAL(dp)                                           :: maxocc, nelectron
       TYPE(cp_blacs_env_type), POINTER                   :: blacs_env
       TYPE(cp_fm_struct_type), POINTER                   :: aux_fit_fm_struct
       TYPE(cp_fm_type), POINTER                          :: mo_coeff_aux_fit

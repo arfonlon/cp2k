@@ -371,10 +371,10 @@ CONTAINS
             IF (SIZE(val%i_val) > 0) THEN
                i_val = val%i_val(1)
             ELSE
-               CPABORT("")
+               CPABORT("Expected integer input type not found: Check the code")
             END IF
          ELSE
-            CPABORT("")
+            CPABORT("Expected integer input type not found: Check the code")
          END IF
       END IF
 
@@ -384,10 +384,10 @@ CONTAINS
             IF (SIZE(val%r_val) > 0) THEN
                r_val = val%r_val(1)
             ELSE
-               CPABORT("")
+               CPABORT("Expected floating point input type not found: Check the code")
             END IF
          ELSE
-            CPABORT("")
+            CPABORT("Expected floating point input type not found: Check the code")
          END IF
       END IF
 

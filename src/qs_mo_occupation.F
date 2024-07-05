@@ -400,8 +400,8 @@ CONTAINS
                                                             nomo, xas_estate
       LOGICAL                                            :: equal_size, is_large
       REAL(KIND=dp)                                      :: delectron, e1, e2, edelta, edist, &
-                                                            el_count, lengthscale, nelec, &
-                                                            occ_estate, total_zeff_corr, &
+                                                            el_count, felectron, lengthscale, &
+                                                            nelec, occ_estate, total_zeff_corr, &
                                                             xas_nelectron
       REAL(KIND=dp), ALLOCATABLE, DIMENSION(:, :)        :: dfde
 
@@ -412,7 +412,7 @@ CONTAINS
       mo_set%occupation_numbers(:) = 0.0_dp
 
       ! Quick return, if no electrons are available
-      IF (mo_set%nelectron == 0) THEN
+      IF (ABS(mo_set%nelectron) < EPSILON(0.0_dp)) THEN
          CALL timestop(handle)
          RETURN
       END IF
@@ -432,15 +432,17 @@ CONTAINS
          is_large = ABS(el_count - xas_nelectron) > xas_nelectron*EPSILON(el_count)
          CPASSERT(.NOT. is_large)
       ELSE
-         IF (MODULO(mo_set%nelectron, INT(mo_set%maxocc)) == 0) THEN
-            nomo = NINT(mo_set%nelectron/mo_set%maxocc)
-            ! Initialize MO occupations
-            mo_set%occupation_numbers(1:nomo) = mo_set%maxocc
-         ELSE
-            nomo = INT(mo_set%nelectron/mo_set%maxocc) + 1
-            ! Initialize MO occupations
-            mo_set%occupation_numbers(1:nomo - 1) = mo_set%maxocc
-            mo_set%occupation_numbers(nomo) = mo_set%nelectron - (nomo - 1)*mo_set%maxocc
+         ! Initialize MO occupations
+         nomo = INT(mo_set%nelectron)/INT(mo_set%maxocc) + &
+                MODULO(INT(mo_set%nelectron), INT(mo_set%maxocc))
+         mo_set%occupation_numbers(1:nomo - 1) = mo_set%maxocc
+         mo_set%occupation_numbers(nomo) = INT(mo_set%nelectron) - (nomo - 1)*mo_set%maxocc
+         mo_set%lfomo = nomo + 1
+         felectron = mo_set%nelectron - AINT(mo_set%nelectron)
+         IF (ABS(felectron) > EPSILON(0.0_dp)) THEN
+            ! Consider fractional electron if needed
+            nomo = nomo + 1
+            mo_set%occupation_numbers(nomo) = felectron
          END IF
 ! introduce applied potential correction here
 ! electron density is adjusted according to applied core correction

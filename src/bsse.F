@@ -234,8 +234,9 @@ CONTAINS
          DIMENSION(:), POINTER                           :: atom_type
       INTEGER                                            :: i, ir, isize, j, k, method_name_id, &
                                                             my_targ, n_rep, num_of_frag, old_size, &
-                                                            present_charge, present_multpl
+                                                            present_multpl
       INTEGER, DIMENSION(:), POINTER                     :: atom_index, atom_list, my_conf, tmplist
+      REAL(KIND=dp)                                      :: present_charge
       TYPE(cell_type), POINTER                           :: cell
       TYPE(cp_subsys_type), POINTER                      :: subsys
       TYPE(mp_para_env_type), POINTER                    :: para_env
@@ -362,7 +363,8 @@ CONTAINS
          DIMENSION(:), POINTER                           :: atom_type
       INTEGER, DIMENSION(:), INTENT(IN)                  :: conf, conf_loc
       TYPE(section_vals_type), POINTER                   :: bsse_section
-      INTEGER, INTENT(IN)                                :: present_charge, present_multpl
+      REAL(KIND=dp), INTENT(IN)                          :: present_charge
+      INTEGER, INTENT(IN)                                :: present_multpl
 
       INTEGER                                            :: i, istat, iw
       CHARACTER(len=20*SIZE(conf))                       :: conf_loc_s, conf_s
@@ -384,7 +386,7 @@ CONTAINS
          WRITE (UNIT=iw, FMT="(T2,A,T80,A)") "-", "-"
          WRITE (UNIT=iw, FMT="(T2,A,T5,A,T30,A,T55,A,T80,A)") &
             "-", "BSSE CALCULATION", "FRAGMENT CONF: "//TRIM(conf_s), "FRAGMENT SUBCONF: "//TRIM(conf_loc_s), "-"
-         WRITE (UNIT=iw, FMT="(T2,A,T30,A,I6,T55,A,I6,T80,A)") "-", "CHARGE =", present_charge, "MULTIPLICITY =", &
+         WRITE (UNIT=iw, FMT="(T2,A,T30,A,F6.1,T55,A,I6,T80,A)") "-", "CHARGE =", present_charge, "MULTIPLICITY =", &
             present_multpl, "-"
          WRITE (UNIT=iw, FMT="(T2,A,T80,A)") "-", "-"
          WRITE (UNIT=iw, FMT="(T2,A,T20,A,T60,A,T80,A)") "-", "ATOM INDEX", "ATOM NAME", "-"
@@ -414,7 +416,8 @@ CONTAINS
 ! **************************************************************************************************
    SUBROUTINE conf_info_setup(present_charge, present_multpl, conf, conf_loc, &
                               bsse_section, dft_section)
-      INTEGER, INTENT(OUT)                               :: present_charge, present_multpl
+      REAL(KIND=dp), INTENT(OUT)                         :: present_charge
+      INTEGER, INTENT(OUT)                               :: present_multpl
       INTEGER, DIMENSION(:), INTENT(IN)                  :: conf, conf_loc
       TYPE(section_vals_type), POINTER                   :: bsse_section, dft_section
 
@@ -423,7 +426,7 @@ CONTAINS
       LOGICAL                                            :: explicit
       TYPE(section_vals_type), POINTER                   :: configurations
 
-      present_charge = 0
+      present_charge = 0.0_dp
       present_multpl = 0
       NULLIFY (configurations, glb_conf, sub_conf)
       ! Loop over all configurations to pick up the right one
@@ -443,14 +446,14 @@ CONTAINS
                              "different from the number of fragments defined!")
             IF (ALL(conf == glb_conf) .AND. ALL(conf_loc == sub_conf)) THEN
                CALL section_vals_val_get(configurations, "CHARGE", i_rep_section=i, &
-                                         i_val=present_charge)
+                                         r_val=present_charge)
                CALL section_vals_val_get(configurations, "MULTIPLICITY", i_rep_section=i, &
                                          i_val=present_multpl)
             END IF
          END DO
       END IF
       ! Setup parameter for this configuration
-      CALL section_vals_val_set(dft_section, "CHARGE", i_val=present_charge)
+      CALL section_vals_val_set(dft_section, "CHARGE", r_val=present_charge)
       CALL section_vals_val_set(dft_section, "MULTIPLICITY", i_val=present_multpl)
    END SUBROUTINE conf_info_setup
 

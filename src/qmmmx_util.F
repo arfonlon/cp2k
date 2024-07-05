@@ -589,11 +589,12 @@ CONTAINS
                                                             qmmm_extended_section
 
       CHARACTER(len=default_string_length), POINTER      :: elem_mapping(:, :), elem_mapping_entry(:)
-      INTEGER :: delta_charge, i_rep_section_core, i_rep_section_extended, i_rep_val_core, &
-         i_rep_val_extended, ielem, ip, n_elements, output_unit
+      INTEGER :: i_rep_section_core, i_rep_section_extended, i_rep_val_core, i_rep_val_extended, &
+         ielem, ip, n_elements, output_unit
       INTEGER, POINTER                                   :: cur_indices(:), cur_labels(:)
       LOGICAL                                            :: mapped, new_element_core, &
                                                             new_element_extended
+      REAL(KIND=dp)                                      :: delta_charge
       TYPE(particle_type), DIMENSION(:), POINTER         :: particles
       TYPE(section_vals_type), POINTER                   :: buffer_non_adaptive_section, &
                                                             dup_link_section, &
@@ -728,8 +729,8 @@ CONTAINS
          END DO ! atom index ip
       END DO ! element index ielem
 
-      CALL section_vals_val_get(force_mixing_section, "EXTENDED_DELTA_CHARGE", i_val=delta_charge)
-      CALL section_vals_val_set(qmmm_extended_section, "DELTA_CHARGE", i_val=delta_charge)
+      CALL section_vals_val_get(force_mixing_section, "EXTENDED_DELTA_CHARGE", r_val=delta_charge)
+      CALL section_vals_val_set(qmmm_extended_section, "DELTA_CHARGE", r_val=delta_charge)
 
       ![NB] check
       DEALLOCATE (elem_mapping, cur_indices, cur_labels)

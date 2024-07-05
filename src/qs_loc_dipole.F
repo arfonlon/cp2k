@@ -105,7 +105,7 @@ CONTAINS
          dipole = 0.0_dp
          IF (do_berry) THEN
             rcc = pbc(rcc, cell)
-            charge_tot = REAL(dft_control%charge, KIND=dp)
+            charge_tot = dft_control%charge
             ria = twopi*MATMUL(cell%h_inv, rcc)
             zphase = CMPLX(COS(ria), SIN(ria), KIND=dp)**charge_tot
             ggamma = CMPLX(1.0_dp, 0.0_dp, KIND=dp)

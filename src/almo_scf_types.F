@@ -156,7 +156,7 @@ MODULE almo_scf_types
       INTEGER, DIMENSION(:), ALLOCATABLE        :: domain_index_of_atom
 
       ! Charge of domains
-      INTEGER, DIMENSION(:), ALLOCATABLE                  :: charge_of_domain
+      REAL(KIND=dp), DIMENSION(:), ALLOCATABLE            :: charge_of_domain
       ! Charge of domains
       INTEGER, DIMENSION(:), ALLOCATABLE                  :: multiplicity_of_domain
 

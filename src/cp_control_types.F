@@ -570,7 +570,6 @@ MODULE cp_control_types
       TYPE(efield_p_type), POINTER, &
          DIMENSION(:)                      :: efield_fields => NULL()
       INTEGER                              :: nspins = 0, &
-                                              charge = 0, &
                                               multiplicity = 0, &
                                               sic_method_id = 0, &
                                               plus_u_method_id = 0, &
@@ -584,7 +583,8 @@ MODULE cp_control_types
                                               auto_basis_ri_hxc = 1, &
                                               auto_basis_ri_xas = 1, &
                                               auto_basis_ri_hfx = 1
-      REAL(KIND=dp)                        :: relax_multiplicity = 0.0_dp, &
+      REAL(KIND=dp)                        :: charge = 0.0_dp, &
+                                              relax_multiplicity = 0.0_dp, &
                                               sic_scaling_a = 0.0_dp, &
                                               sic_scaling_b = 0.0_dp, &
                                               pos_dir_surf_dip = 0.0_dp

@@ -164,10 +164,10 @@ CONTAINS
 
       CHARACTER(len=*), PARAMETER                        :: routineN = 'ec_mos_init'
 
-      INTEGER                                            :: handle, ispin, multiplicity, n_ao, &
-                                                            nelectron, nmo, nspins
+      INTEGER                                            :: handle, ispin, multiplicity, n_ao, nmo, &
+                                                            nspins
       INTEGER, DIMENSION(2)                              :: n_mo, nelectron_spin
-      REAL(dp)                                           :: maxocc
+      REAL(dp)                                           :: maxocc, nelectron
       TYPE(cp_blacs_env_type), POINTER                   :: blacs_env
       TYPE(cp_fm_struct_type), POINTER                   :: fm_struct
       TYPE(cp_fm_type), POINTER                          :: mo_coeff
@@ -193,7 +193,7 @@ CONTAINS
       ! Start setup
       CALL get_qs_kind_set(qs_kind_set, nsgf=n_ao, nelectron=nelectron)
 
-      ! the total number of electrons
+      ! The total number of electrons
       nelectron = nelectron - dft_control%charge
       multiplicity = dft_control%multiplicity
 

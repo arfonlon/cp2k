@@ -371,7 +371,7 @@ CONTAINS
       CALL section_vals_val_get(scf_section, "OT%_SECTION_PARAMETERS_", l_val=l_param)
       dft_control%restricted = (dft_control%roks .AND. l_param)
 
-      CALL section_vals_val_get(dft_section, "CHARGE", i_val=dft_control%charge)
+      CALL section_vals_val_get(dft_section, "CHARGE", r_val=dft_control%charge)
       CALL section_vals_val_get(dft_section, "MULTIPLICITY", i_val=dft_control%multiplicity)
       CALL section_vals_val_get(dft_section, "RELAX_MULTIPLICITY", r_val=dft_control%relax_multiplicity)
       IF (dft_control%relax_multiplicity > 0.0_dp) THEN
@@ -1618,7 +1618,7 @@ CONTAINS
          WRITE (UNIT=output_unit, FMT="(T2,A,T76,I5)") &
             "DFT| Number of spin states", dft_control%nspins
 
-         WRITE (UNIT=output_unit, FMT="(T2,A,T76,I5)") &
+         WRITE (UNIT=output_unit, FMT="(T2,A,T66,ES15.6)") &
             "DFT| Charge", dft_control%charge
 
          IF (dft_control%sic_method_id .NE. sic_none) CALL cite_reference(VandeVondele2005b)

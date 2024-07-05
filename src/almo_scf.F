@@ -1071,7 +1071,7 @@ CONTAINS
          !         sum_temp
 
          sum_temp = SUM(almo_scf_env%charge_of_domain(:))
-         WRITE (unit_nr, '(T2,A,T53,I5,F9.2,I5,I9)') &
+         WRITE (unit_nr, '(T2,A,T53,F5.1,F9.2,F5.1,I9)') &
             "Charges per fragment (min, av, max, total):", &
             MINVAL(almo_scf_env%charge_of_domain(:)), &
             (1.0_dp*sum_temp)/almo_scf_env%ndomains, &
@@ -1137,7 +1137,7 @@ CONTAINS
                   neig_string = "N/A"
                END SELECT
 
-               WRITE (unit_nr, '(T2,I10,I13,I13,I13,I13,A13)') &
+               WRITE (unit_nr, '(T2,I10,I13,I13,I13,F13.6,A13)') &
                   idomain, almo_scf_env%nbasis_of_domain(idomain), &
                   SUM(almo_scf_env%nocc_of_domain(idomain, :)), &
                   SUM(almo_scf_env%nvirt_of_domain(idomain, :)), &

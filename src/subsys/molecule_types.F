@@ -453,8 +453,11 @@ CONTAINS
                                     mol_to_multiplicity)
 
       TYPE(molecule_type), DIMENSION(:), INTENT(IN)      :: molecule_set
-      INTEGER, DIMENSION(:), INTENT(OUT), OPTIONAL :: atom_to_mol, mol_to_first_atom, &
-         mol_to_last_atom, mol_to_nelectrons, mol_to_nbasis, mol_to_charge, mol_to_multiplicity
+      INTEGER, DIMENSION(:), INTENT(OUT), OPTIONAL       :: atom_to_mol, mol_to_first_atom, &
+                                                            mol_to_last_atom, mol_to_nelectrons, &
+                                                            mol_to_nbasis
+      REAL(KIND=dp), DIMENSION(:), INTENT(OUT), OPTIONAL :: mol_to_charge
+      INTEGER, DIMENSION(:), INTENT(OUT), OPTIONAL       :: mol_to_multiplicity
 
       INTEGER                                            :: first_atom, iatom, imol, last_atom, &
                                                             nbasis, nelec
@@ -491,7 +494,7 @@ CONTAINS
 
          IF (PRESENT(mol_to_charge)) THEN
             CALL get_molecule_kind(imol_kind, charge=charge)
-            mol_to_charge(imol) = NINT(charge)
+            mol_to_charge(imol) = charge
          END IF
 
          IF (PRESENT(mol_to_nbasis)) THEN

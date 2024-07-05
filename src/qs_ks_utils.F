@@ -908,7 +908,6 @@ CONTAINS
                                          extension=".scfLog")
 
       CALL qs_rho_get(rho, tot_rho_r=tot_rho_r_arr, rho_ao_kp=rho_ao)
-      n_electrons = n_electrons - dft_control%charge
       tot_rho_r = accurate_sum(tot_rho_r_arr)
 
       trace = 0
@@ -926,11 +925,10 @@ CONTAINS
          WRITE (UNIT=output_unit, FMT="((T3,A,T41,2F20.10))") &
             "Electronic density on regular grids: ", &
             tot_rho_r, &
-            tot_rho_r + &
-            REAL(n_electrons, dp), &
+            tot_rho_r + REAL(n_electrons, KIND=dp) - dft_control%charge, &
             "Core density on regular grids:", &
             qs_charges%total_rho_core_rspace, &
-            qs_charges%total_rho_core_rspace - REAL(n_electrons + dft_control%charge, dp)
+            qs_charges%total_rho_core_rspace - REAL(n_electrons, KIND=dp) - dft_control%charge
       END IF
       IF (dft_control%qs_control%gapw) THEN
          tot1_h = qs_charges%total_rho1_hard(1)

@@ -183,9 +183,9 @@ CONTAINS
       CALL section_add_keyword(section, keyword)
       CALL keyword_release(keyword)
       CALL keyword_create(keyword, __LOCATION__, name="CHARGE", &
-                          description="The total charge of the system", &
+                          description="Total charge of the system", &
                           usage="CHARGE -1", &
-                          default_i_val=0)
+                          default_r_val=0.0_dp)
       CALL section_add_keyword(section, keyword)
       CALL keyword_release(keyword)
       CALL keyword_create(keyword, __LOCATION__, name="EXCITATIONS", &
@@ -1178,9 +1178,9 @@ CONTAINS
       CALL keyword_release(keyword)
 
       CALL keyword_create(keyword, __LOCATION__, name="CHARGE", &
-                          description="The total charge for each fragment.", &
-                          usage="CHARGE -1", &
-                          default_i_val=0)
+                          description="Total charge for each fragment.", &
+                          usage="CHARGE -1.0", &
+                          default_r_val=0.0_dp)
       CALL section_add_keyword(subsection, keyword)
       CALL keyword_release(keyword)
       CALL section_add_subsection(section, subsection)

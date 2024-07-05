@@ -489,10 +489,10 @@ CONTAINS
       CHARACTER(LEN=*), PARAMETER :: routineN = 'kpoint_initialize_mos'
 
       INTEGER                                            :: handle, ic, ik, is, nadd, nao, nc, &
-                                                            nelectron, nkp_loc, nmo, nmorig(2), &
-                                                            nspin
+                                                            nkp_loc, nmo, nmorig(2), nspin
       LOGICAL                                            :: aux_fit
-      REAL(KIND=dp)                                      :: flexible_electron_count, maxocc, n_el_f
+      REAL(KIND=dp)                                      :: flexible_electron_count, maxocc, n_el_f, &
+                                                            nelectron
       TYPE(cp_blacs_env_type), POINTER                   :: blacs_env
       TYPE(cp_fm_pool_p_type), DIMENSION(:), POINTER     :: ao_ao_fm_pools
       TYPE(cp_fm_struct_type), POINTER                   :: matrix_struct
@@ -912,9 +912,9 @@ CONTAINS
       CHARACTER(LEN=*), PARAMETER :: routineN = 'kpoint_set_mo_occupation'
 
       INTEGER                                            :: handle, ik, ikpgr, ispin, kplocal, nb, &
-                                                            ne_a, ne_b, nelectron, nkp, nmo, nspin
+                                                            nkp, nmo, nspin
       INTEGER, DIMENSION(2)                              :: kp_range
-      REAL(KIND=dp)                                      :: kTS, mu, mus(2), nel
+      REAL(KIND=dp)                                      :: kTS, mu, mus(2), ne_a, ne_b
       REAL(KIND=dp), ALLOCATABLE, DIMENSION(:, :, :)     :: weig, wocc
       REAL(KIND=dp), DIMENSION(:), POINTER               :: eigenvalues, occupation, wkp
       TYPE(kpoint_env_type), POINTER                     :: kp
@@ -928,8 +928,7 @@ CONTAINS
       kp => kpoint%kp_env(1)%kpoint_env
       nspin = SIZE(kp%mos, 2)
       mo_set => kp%mos(1, 1)
-      CALL get_mo_set(mo_set, nmo=nmo, nelectron=nelectron)
-      ne_a = nelectron
+      CALL get_mo_set(mo_set, nmo=nmo, nelectron=ne_a)
       IF (nspin == 2) THEN
          CALL get_mo_set(kp%mos(1, 2), nmo=nb, nelectron=ne_b)
          CPASSERT(nmo == nb)
@@ -957,22 +956,18 @@ CONTAINS
          SELECT CASE (smear%method)
          CASE (smear_fermi_dirac)
             IF (nspin == 1) THEN
-               nel = REAL(nelectron, KIND=dp)
-               CALL Fermikp(wocc(:, :, 1), mus(1), kTS, weig(:, :, 1), nel, wkp, &
+               CALL Fermikp(wocc(:, :, 1), mus(1), kTS, weig(:, :, 1), ne_a, wkp, &
                             smear%electronic_temperature, 2.0_dp)
             ELSE IF (smear%fixed_mag_mom > 0.0_dp) THEN
                CPABORT("kpoints: Smearing with fixed magnetic moments not (yet) supported")
-               nel = REAL(ne_a, KIND=dp)
-               CALL Fermikp(wocc(:, :, 1), mus(1), kTS, weig(:, :, 1), nel, wkp, &
+               CALL Fermikp(wocc(:, :, 1), mus(1), kTS, weig(:, :, 1), ne_a, wkp, &
                             smear%electronic_temperature, 1.0_dp)
-               nel = REAL(ne_b, KIND=dp)
-               CALL Fermikp(wocc(:, :, 2), mus(2), kTS, weig(:, :, 2), nel, wkp, &
+               CALL Fermikp(wocc(:, :, 2), mus(2), kTS, weig(:, :, 2), ne_b, wkp, &
                             smear%electronic_temperature, 1.0_dp)
             ELSE
-               nel = REAL(ne_a, KIND=dp) + REAL(ne_b, KIND=dp)
-               CALL Fermikp2(wocc(:, :, :), mu, kTS, weig(:, :, :), nel, wkp, &
+               CALL Fermikp2(wocc(:, :, :), mu, kTS, weig(:, :, :), ne_a + ne_b, wkp, &
                              smear%electronic_temperature)
-               kTS = kTS/2._dp
+               kTS = 0.5_dp*kTS
                mus(1:2) = mu
             END IF
          CASE DEFAULT
@@ -981,13 +976,10 @@ CONTAINS
       ELSE
          ! fixed occupations (2/1)
          IF (nspin == 1) THEN
-            nel = REAL(nelectron, KIND=dp)
-            CALL Fermikp(wocc(:, :, 1), mus(1), kTS, weig(:, :, 1), nel, wkp, 0.0_dp, 2.0_dp)
+            CALL Fermikp(wocc(:, :, 1), mus(1), kTS, weig(:, :, 1), ne_a, wkp, 0.0_dp, 2.0_dp)
          ELSE
-            nel = REAL(ne_a, KIND=dp)
-            CALL Fermikp(wocc(:, :, 1), mus(1), kTS, weig(:, :, 1), nel, wkp, 0.0_dp, 1.0_dp)
-            nel = REAL(ne_b, KIND=dp)
-            CALL Fermikp(wocc(:, :, 2), mus(2), kTS, weig(:, :, 2), nel, wkp, 0.0_dp, 1.0_dp)
+            CALL Fermikp(wocc(:, :, 1), mus(1), kTS, weig(:, :, 1), ne_a, wkp, 0.0_dp, 1.0_dp)
+            CALL Fermikp(wocc(:, :, 2), mus(2), kTS, weig(:, :, 2), ne_b, wkp, 0.0_dp, 1.0_dp)
          END IF
       END IF
       DO ikpgr = 1, kplocal

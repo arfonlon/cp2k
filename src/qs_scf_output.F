@@ -110,8 +110,8 @@ CONTAINS
       INTEGER, INTENT(IN)                                :: output_unit
       TYPE(qs_environment_type), POINTER                 :: qs_env
 
-      INTEGER                                            :: nelectron_total
       LOGICAL                                            :: gapw, gapw_xc, qmmm
+      REAL(KIND=dp)                                      :: nelectron_total
       TYPE(dft_control_type), POINTER                    :: dft_control
       TYPE(qs_charges_type), POINTER                     :: qs_charges
       TYPE(qs_energy_type), POINTER                      :: energy
@@ -143,7 +143,8 @@ CONTAINS
       TYPE(mo_set_type), DIMENSION(:), INTENT(IN)        :: mos
       TYPE(dft_control_type), POINTER                    :: dft_control
 
-      INTEGER                                            :: homo, ispin, nao, nelectron_spin, nmo
+      INTEGER                                            :: homo, ispin, nao, nmo
+      REAL(KIND-dp)                                      :: nelectron_spin
 
       IF (output_unit > 0) THEN
          DO ispin = 1, dft_control%nspins
@@ -187,14 +188,14 @@ CONTAINS
       CHARACTER(LEN=default_string_length), &
          DIMENSION(:), POINTER                           :: tmpstringlist
       INTEGER                                            :: handle, homo, ikp, ispin, iw, kpoint, &
-                                                            nao, nelectron, nkp, nmo, nspin, numo
+                                                            nao, nkp, nmo, nspin, numo
       INTEGER, DIMENSION(2)                              :: nmos_occ
       INTEGER, DIMENSION(:), POINTER                     :: mo_index_range
       LOGICAL                                            :: do_kpoints, print_eigvals, &
                                                             print_eigvecs, print_mo_info, &
                                                             print_occup, print_occup_stats
       REAL(KIND=dp)                                      :: flexible_electron_count, maxocc, n_el_f, &
-                                                            occup_stats_occ_threshold
+                                                            nelectron, occup_stats_occ_threshold
       REAL(KIND=dp), DIMENSION(:), POINTER               :: mo_eigenvalues, umo_eigenvalues
       TYPE(admm_type), POINTER                           :: admm_env
       TYPE(atomic_kind_type), DIMENSION(:), POINTER      :: atomic_kind_set
@@ -611,7 +612,7 @@ CONTAINS
                accurate_sum(tot_rho_r) + nelectron_total, &
                "Core density on regular grids:", &
                qs_charges%total_rho_core_rspace, &
-               qs_charges%total_rho_core_rspace - REAL(nelectron_total + dft_control%charge, dp)
+               qs_charges%total_rho_core_rspace - REAL(nelectron_total, KIND=dp) - dft_control%charge
 
             IF (dft_control%correct_surf_dip) THEN
                WRITE (UNIT=output_unit, FMT="((T3,A,/,T3,A,T41,F20.10))") &

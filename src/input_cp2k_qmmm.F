@@ -216,11 +216,14 @@ CONTAINS
       CALL section_add_keyword(section, keyword)
       CALL keyword_release(keyword)
 
-      CALL keyword_create( &
-         keyword, __LOCATION__, name="DELTA_CHARGE", &
-         description="Additional net charge relative to that specified in DFT section.  Used automatically by force mixing", &
-         usage="DELTA_CHARGE q", default_i_val=0, &
-         n_var=1, type_of_var=integer_t, repeats=.FALSE.)
+      CALL keyword_create(keyword, __LOCATION__, name="DELTA_CHARGE", &
+                          description="Additional net charge relative to that specified in DFT section. "// &
+                          "Used automatically by force mixing", &
+                          usage="DELTA_CHARGE -1.0", &
+                          default_r_val=0.0_dp, &
+                          n_var=1, &
+                          type_of_var=real_t, &
+                          repeats=.FALSE.)
       CALL section_add_keyword(section, keyword)
       CALL keyword_release(keyword)
 
@@ -436,10 +439,13 @@ CONTAINS
       CALL keyword_release(keyword)
 
       CALL keyword_create(keyword, __LOCATION__, name="EXTENDED_DELTA_CHARGE", &
-                          description="Additional net charge in extended region relative to core (core charge is"// &
-                          " specified in DFT section, as usual for a convetional QM/MM calculation)", &
-                          usage="EXTENDED_DELTA_CHARGE q", default_i_val=0, &
-                          n_var=1, type_of_var=integer_t, repeats=.FALSE.)
+                          description="Additional net charge in extended region relative to core (core charge is "// &
+                          "specified in DFT section, as usual for a convetional QM/MM calculation)", &
+                          usage="EXTENDED_DELTA_CHARGE -1.0", &
+                          default_r_val=0.0_dp, &
+                          n_var=1, &
+                          type_of_var=real_t, &
+                          repeats=.FALSE.)
       CALL section_add_keyword(section, keyword)
       CALL keyword_release(keyword)
 

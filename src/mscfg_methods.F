@@ -41,7 +41,8 @@ MODULE mscfg_methods
                                               section_vals_type,&
                                               section_vals_val_get,&
                                               section_vals_val_set
-   USE kinds,                           ONLY: default_string_length
+   USE kinds,                           ONLY: default_string_length,&
+                                              dp
    USE message_passing,                 ONLY: mp_para_env_type
    USE molecule_types,                  ONLY: get_molecule_set_info,&
                                               molecule_type
@@ -83,8 +84,9 @@ CONTAINS
       TYPE(force_env_type), POINTER                      :: force_env
 
       INTEGER                                            :: nmols
-      INTEGER, ALLOCATABLE, DIMENSION(:)                 :: charge_of_frag, first_atom_of_frag, &
-                                                            last_atom_of_frag, multip_of_frag
+      INTEGER, ALLOCATABLE, DIMENSION(:)                 :: first_atom_of_frag, last_atom_of_frag, &
+                                                            multip_of_frag
+      REAL(KIND=dp), ALLOCATABLE, DIMENSION(:)           :: charge_of_frag
       TYPE(molecule_type), DIMENSION(:), POINTER         :: molecule_set
       TYPE(qs_environment_type), POINTER                 :: qs_env
 
@@ -137,19 +139,21 @@ CONTAINS
       TYPE(force_env_type), POINTER                      :: force_env
       TYPE(global_environment_type), POINTER             :: globenv
       INTEGER, INTENT(IN)                                :: nfrags
-      INTEGER, DIMENSION(:), INTENT(IN)                  :: first_atom_of_frag, last_atom_of_frag, &
-                                                            charge_of_frag, multip_of_frag
+      INTEGER, DIMENSION(:), INTENT(IN)                  :: first_atom_of_frag, last_atom_of_frag
+      REAL(KIND=dp), DIMENSION(:), INTENT(IN)            :: charge_of_frag
+      INTEGER, DIMENSION(:), INTENT(IN)                  :: multip_of_frag
 
       CHARACTER(LEN=*), PARAMETER :: routineN = 'calcs_on_isolated_molecules'
 
       CHARACTER(LEN=default_string_length)               :: name
       CHARACTER(LEN=default_string_length), &
          DIMENSION(:), POINTER                           :: atom_type
-      INTEGER :: first_atom, force_method, global_charge, global_multpl, handle, i, ifrag, imo, &
-         isize, j, k, last_atom, my_targ, nb_eigenval_stored, nmo, nmo_of_frag, nmosets_of_frag, &
-         tot_added_mos, tot_isize
+      INTEGER :: first_atom, force_method, global_multpl, handle, i, ifrag, imo, isize, j, k, &
+         last_atom, my_targ, nb_eigenval_stored, nmo, nmo_of_frag, nmosets_of_frag, tot_added_mos, &
+         tot_isize
       INTEGER, DIMENSION(:), POINTER                     :: atom_index, atom_list
       LOGICAL                                            :: global_almo_scf_keyword, smear_almo_scf
+      REAL(KIND=dp)                                      :: global_charge
       TYPE(almo_scf_env_type), POINTER                   :: almo_scf_env
       TYPE(cell_type), POINTER                           :: cell
       TYPE(cp_subsys_type), POINTER                      :: subsys, subsys_loc
@@ -178,7 +182,7 @@ CONTAINS
       ! Save several global settings to restore them after the loop:
       !  charge, multiplicity, ALMO flag
       !
-      CALL section_vals_val_get(dft_section, "CHARGE", i_val=global_charge)
+      CALL section_vals_val_get(dft_section, "CHARGE", r_val=global_charge)
       CALL section_vals_val_get(dft_section, "MULTIPLICITY", i_val=global_multpl)
       qs_section => section_vals_get_subs_vals(dft_section, "QS")
       CALL section_vals_val_get(qs_section, "ALMO_SCF", l_val=global_almo_scf_keyword)
@@ -247,7 +251,7 @@ CONTAINS
          !
          ! Setup the charge and multiplicity of the molecule
          !
-         CALL section_vals_val_set(dft_section, "CHARGE", i_val=charge_of_frag(ifrag))
+         CALL section_vals_val_set(dft_section, "CHARGE", r_val=charge_of_frag(ifrag))
          CALL section_vals_val_set(dft_section, "MULTIPLICITY", i_val=multip_of_frag(ifrag))
          !
          ! Create a list of atoms in the current molecule
@@ -348,7 +352,7 @@ CONTAINS
 
       END DO
 
-      CALL section_vals_val_set(dft_section, "CHARGE", i_val=global_charge)
+      CALL section_vals_val_set(dft_section, "CHARGE", r_val=global_charge)
       CALL section_vals_val_set(dft_section, "MULTIPLICITY", i_val=global_multpl)
       CALL section_vals_val_set(qs_section, "ALMO_SCF", l_val=global_almo_scf_keyword)
 
@@ -375,7 +379,9 @@ CONTAINS
       INTEGER, DIMENSION(:), POINTER                     :: atom_index
       CHARACTER(len=default_string_length), &
          DIMENSION(:), POINTER                           :: atom_type
-      INTEGER, INTENT(IN)                                :: frag, nfrags, charge, multpl
+      INTEGER, INTENT(IN)                                :: frag, nfrags
+      REAL(KIND=dp)                                      :: charge
+      INTEGER, INTENT(IN)                                :: multpl
 
       CHARACTER(len=11)                                  :: charI
       INTEGER                                            :: i, iw
@@ -395,7 +401,7 @@ CONTAINS
          WRITE (UNIT=iw, FMT="(T2,A,T80,A)") "-", "-"
          WRITE (UNIT=iw, FMT="(T2,A,T5,A,T25,A,T40,I11,T53,A,T67,I11,T80,A)") &
             "-", "MOLECULAR GUESS:", "FRAGMENT", frag, "OUT OF", nfrags, "-"
-         WRITE (UNIT=iw, FMT="(T2,A,T25,A,T40,I11,T53,A,T67,I11,T80,A)") "-", "CHARGE", charge, "MULTIPLICITY", &
+         WRITE (UNIT=iw, FMT="(T2,A,T25,A,T40,F11.6,T53,A,T67,I11,T80,A)") "-", "CHARGE", charge, "MULTIPLICITY", &
             multpl, "-"
          WRITE (UNIT=iw, FMT="(T2,A,T80,A)") "-", "-"
          WRITE (UNIT=iw, FMT="(T2,A,T25,A,T53,A,T80,A)") "-", "ATOM INDEX", "ATOM NAME", "-"

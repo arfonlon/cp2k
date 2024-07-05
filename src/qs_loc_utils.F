@@ -1061,11 +1061,13 @@ CONTAINS
 
       CHARACTER(len=*), PARAMETER                        :: routineN = 'qs_loc_init'
 
-      INTEGER :: handle, homo, i, ilast_intocc, ilow, ispin, iup, n_mo(2), n_mos(2), nao, &
-         nelectron, nextra, nmoloc(2), nocc, npocc, nspin, output_unit
+      INTEGER                                            :: handle, homo, i, ilast_intocc, ilow, &
+                                                            ispin, iup, n_mo(2), n_mos(2), nao, &
+                                                            nextra, nmoloc(2), nocc, npocc, nspin, &
+                                                            output_unit
       LOGICAL                                            :: my_do_homo, my_do_mixed, my_do_mo_cubes, &
                                                             restart_found
-      REAL(KIND=dp)                                      :: maxocc, my_tot_zeff_corr
+      REAL(KIND=dp)                                      :: maxocc, my_tot_zeff_corr, nelectron
       REAL(KIND=dp), DIMENSION(:), POINTER               :: mo_eigenvalues, occupation
       TYPE(cp_fm_type), POINTER                          :: mo_coeff
       TYPE(cp_logger_type), POINTER                      :: logger

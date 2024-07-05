@@ -1326,7 +1326,7 @@ CONTAINS
                   END IF
                END DO
             ELSEIF (dft_control%qs_control%semi_empirical) THEN
-               yy = REAL(dft_control%charge, KIND=dp)/REAL(nao, KIND=dp)
+               yy = dft_control%charge/REAL(nao, KIND=dp)
                DO iatom = 1, natom
                   atom_a = atom_list(iatom)
                   isgfa = first_sgf(atom_a)

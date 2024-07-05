@@ -1407,8 +1407,14 @@ CONTAINS
       !   *** Allocate the MO data types ***
       CALL get_qs_kind_set(qs_kind_set, nsgf=n_ao, nelectron=nelectron)
 
-      ! the total number of electrons
-      nelectron = nelectron - dft_control%charge
+      ! The total number of electrons
+      nelectron = nelectron - INT(dft_control%charge)
+      IF (ABS(dft_control%charge - ANINT(dft_control%charge)) > EPSILON(0.0_dp)) THEN
+         IF (.NOT. dft_control%smear) THEN
+            CPABORT("A non-integer system charge is not possible without orbital occupation smearing")
+         END IF
+         CPWARN("A non-integer system charge is used which is an experimental feature")
+      END IF
 
       IF (dft_control%multiplicity == 0) THEN
          IF (MODULO(nelectron, 2) == 0) THEN

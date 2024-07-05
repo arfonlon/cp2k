@@ -1310,7 +1310,9 @@ CONTAINS
                             c_vals_ptr=c_vals_ptr, enum=keyword%enum)
          END IF
          CPASSERT(ASSOCIATED(my_val))
-         CPASSERT(my_val%type_of_var == keyword%type_of_var)
+         IF (my_val%type_of_var /= keyword%type_of_var) THEN
+            CPABORT("Supplied value type and keyword value type do not match: Check the code")
+         END IF
       END IF
       vals => s_vals%values(ik, irs)%list
       IF (irk == -1) THEN

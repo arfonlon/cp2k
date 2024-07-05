@@ -115,9 +115,8 @@ CONTAINS
 
       CHARACTER(len=default_string_length), &
          DIMENSION(:), POINTER                           :: qm_atom_type
-      INTEGER                                            :: center_i, delta_charge, handle, iw, iw2, &
-                                                            orig_charge, qmmm_coupl_type, &
-                                                            use_multipole
+      INTEGER                                            :: center_i, handle, iw, iw2, &
+                                                            qmmm_coupl_type, use_multipole
       INTEGER, DIMENSION(:), POINTER                     :: mm_atom_index, mm_link_atoms, &
                                                             qm_atom_index
       LOGICAL                                            :: add_mm_charges, explicit, &
@@ -125,7 +124,7 @@ CONTAINS
                                                             qmmm_link, qmmm_link_Imomm, shell_model
       REAL(dp), DIMENSION(:), POINTER                    :: mm_atom_chrg, mm_el_pot_radius, &
                                                             mm_el_pot_radius_corr
-      REAL(KIND=dp)                                      :: eps_mm_rspace
+      REAL(KIND=dp)                                      :: delta_charge, eps_mm_rspace, orig_charge
       REAL(KIND=dp), DIMENSION(3)                        :: abc_mm, abc_qm
       REAL(KIND=dp), DIMENSION(:), POINTER               :: fist_scale_charge_link, &
                                                             mm_link_scale_factor
@@ -344,9 +343,9 @@ CONTAINS
          CALL print_image_charge_info(qmmm_env_qm, qmmm_section)
       END IF
 
-      CALL section_vals_val_get(qmmm_section, "DELTA_CHARGE", i_val=delta_charge)
-      CALL section_vals_val_get(force_env_section, "DFT%CHARGE", i_val=orig_charge)
-      CALL section_vals_val_set(force_env_section, "DFT%CHARGE", i_val=orig_charge + delta_charge)
+      CALL section_vals_val_get(qmmm_section, "DELTA_CHARGE", r_val=delta_charge)
+      CALL section_vals_val_get(force_env_section, "DFT%CHARGE", r_val=orig_charge)
+      CALL section_vals_val_set(force_env_section, "DFT%CHARGE", r_val=orig_charge + delta_charge)
 
       CALL section_vals_val_set(force_env_section, "METHOD", i_val=do_qs)
       CALL create_small_subsys(subsys_qm, &
@@ -373,7 +372,7 @@ CONTAINS
          CALL set_qs_env(qs_env, super_cell=super_cell, qmmm_periodic=qmmm_env_qm%periodic)
          CALL cell_release(super_cell)
       END IF
-      CALL section_vals_val_set(force_env_section, "DFT%CHARGE", i_val=orig_charge)
+      CALL section_vals_val_set(force_env_section, "DFT%CHARGE", r_val=orig_charge)
       CALL cp_print_key_finished_output(iw, logger, print_gen, "")
       iw2 = cp_print_key_unit_nr(logger, qmmm_section, "PRINT%PROGRAM_BANNER", &
                                  extension=".qmmmLog")

@@ -292,7 +292,7 @@ CONTAINS
          ! Total charge
          ! !===========================================================================!
          WRITE (iwfx, "(A)") "<Net Charge>"
-         WRITE (iwfx, "(F8.4)") REAL(dft_control%charge, KIND=dp)
+         WRITE (iwfx, "(F8.4)") dft_control%charge
          WRITE (iwfx, "(A,/)") "</Net Charge>"
 
          ! !===========================================================================!

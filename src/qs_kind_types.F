@@ -867,7 +867,8 @@ CONTAINS
          gth_potential_present, sgp_potential_present, paw_atom_present, dft_plus_u_atom_present
       INTEGER, INTENT(OUT), OPTIONAL :: maxcgf, maxsgf, maxco, maxco_proj, maxgtops, maxlgto, &
          maxlprj, maxnset, maxsgf_set, ncgf, npgf, nset, nsgf, nshell, maxpol, maxlppl, maxlppnl, &
-         maxppnl, nelectron
+         maxppnl
+      REAL(KIND=dp), INTENT(OUT), OPTIONAL               :: nelectron
       INTEGER, INTENT(IN), OPTIONAL                      :: maxder
       INTEGER, INTENT(OUT), OPTIONAL                     :: max_ngrid_rad, max_sph_harm, &
                                                             maxg_iso_not0, lmax_rho0
@@ -914,7 +915,7 @@ CONTAINS
          IF (PRESENT(maxsgf)) maxsgf = 0
          IF (PRESENT(maxsgf_set)) maxsgf_set = 0
          IF (PRESENT(ncgf)) ncgf = 0
-         IF (PRESENT(nelectron)) nelectron = 0
+         IF (PRESENT(nelectron)) nelectron = 0.0_dp
          IF (PRESENT(npgf)) npgf = 0
          IF (PRESENT(nset)) nset = 0
          IF (PRESENT(nsgf)) nsgf = 0
@@ -1126,7 +1127,7 @@ CONTAINS
                   zeff = 0.0_dp
                   zeff_correction = 0.0_dp
                END IF
-               nelectron = nelectron + qs_kind_set(ikind)%natom*NINT(zeff - zeff_correction)
+               nelectron = nelectron + qs_kind_set(ikind)%natom*(zeff - zeff_correction)
             END IF
 
             IF (PRESENT(basis_rcut)) THEN
