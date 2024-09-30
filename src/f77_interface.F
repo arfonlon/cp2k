@@ -174,7 +174,7 @@ MODULE f77_interface
    PUBLIC :: default_para_env
    PUBLIC :: init_cp2k, finalize_cp2k
    PUBLIC :: create_force_env, destroy_force_env, set_pos, get_pos, &
-             get_force, calc_energy_force, get_energy, get_stress_tensor, &
+             get_force, calc_energy_force, get_mats, get_energy, get_stress_tensor, &
              calc_energy, calc_force, check_input, get_natom, get_nparticle, &
              f_env_add_defaults, f_env_rm_defaults, f_env_type, &
              f_env_get_from_id, &
