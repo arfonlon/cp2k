@@ -105,23 +105,16 @@ CONTAINS
                                       l_val=loverlap_deltat)
          END IF
 
-         print*, "AMF: TEST 5"
          ! *** Perform a SCF run ***
          IF (.NOT. loverlap_deltat) THEN
             IF (dft_control%qs_control%do_ls_scf) THEN
-         print*, "AMF: TEST 6"
                CALL ls_scf(qs_env=qs_env)
-         print*, "AMF: TEST 7"
             ELSE IF (dft_control%qs_control%do_almo_scf) THEN
                CALL almo_entry_scf(qs_env, calc_forces=my_calc_forces)
             ELSE
-         print*, "AMF: TEST 8"
                CALL scf(qs_env=qs_env)
-         print*, "AMF: TEST 9"
             END IF
-         print*, "AMF: TEST 10"
          END IF
-         print*, "AMF: TEST 11"
 
          IF (do_consistent_energies) THEN
             CALL qs_ks_update_qs_env(qs_env, calculate_forces=.FALSE., just_energy=.FALSE.)
